@@ -64,5 +64,20 @@ router.patch("/:contactId", validateUpdate, async (req, res, next) => {
     next(err);
   }
 });
+router.patch("/:contactId/favorite", async (req, res, next) => {
+  try {
+    const contact = await Contacts.update(req.params.contactId, req.body);
+    if (contact) {
+      return res
+        .status(200)
+        .json({ status: "success", code: 200, body: { contact } });
+    }
+    return res
+      .status(404)
+      .json({ status: "error", code: 404, message: "Not Found" });
+  } catch (err) {
+    next(err);
+  }
+});
 
 module.exports = router;

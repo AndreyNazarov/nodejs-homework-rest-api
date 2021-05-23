@@ -1,7 +1,12 @@
 const Joi = require("joi");
 
 const schemaContactCreate = Joi.object({
-  name: Joi.string().alphanum().min(4).max(30).required().required(),
+  name: Joi.string()
+    .regex(/[A-Z]\w+/)
+    .min(3)
+    .max(30)
+    .required(),
+  favorite: Joi.boolean().optional(),
 
   phone: Joi.number().integer().required(),
 
@@ -13,7 +18,7 @@ const schemaContactCreate = Joi.object({
     .required(),
 });
 const schemaUpdate = Joi.object({
-  name: Joi.string().alphanum().min(3).max(30).optional(),
+  name: Joi.string().min(3).max(30).optional(),
 
   phone: Joi.number().integer().optional(),
 

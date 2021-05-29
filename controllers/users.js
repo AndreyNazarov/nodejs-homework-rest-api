@@ -1,7 +1,6 @@
 const Users = require("../model/users");
 const { HttpCode } = require("../helper/constants");
 const jwt = require("jsonwebtoken");
-
 require("dotenv").config();
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
 
@@ -51,6 +50,10 @@ const login = async (req, res, next) => {
     next(e);
   }
 };
-const logout = async (req, res, next) => {};
+const logout = async (req, res, next) => {
+  const id = req.user.id;
+  await Users.updateToken(id, null);
+  return res.status(204).json({});
+};
 
 module.exports = { reg, login, logout };

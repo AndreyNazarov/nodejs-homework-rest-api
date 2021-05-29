@@ -2,15 +2,20 @@ const express = require("express");
 const router = express.Router();
 const ctrl = require("../../../controllers/contacts");
 const { validateCreate } = require("./validation");
-router.get("/", ctrl.getAll);
+// const passport = require("passport");
+// require("../config/passport");
 
-router.get("/:contactId", ctrl.getById);
+const guard = require("../../../helper/guard");
 
-router.post("/", validateCreate, ctrl.create);
+router.get("/", guard, ctrl.getAll);
 
-router.delete("/:contactId", ctrl.remove);
+router.get("/:contactId", guard, ctrl.getById);
 
-router.patch("/:contactId", ctrl.update);
-router.patch("/:contactId/favorite", ctrl.favUpdate);
+router.post("/", guard, validateCreate, ctrl.create);
+
+router.delete("/:contactId", guard, ctrl.remove);
+
+router.patch("/:contactId", guard, ctrl.update);
+router.patch("/:contactId/favorite", guard, ctrl.favUpdate);
 
 module.exports = router;

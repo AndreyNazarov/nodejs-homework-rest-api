@@ -1,28 +1,46 @@
 const Contact = require("./schemas/contact");
-// const fs = require("fs/promises");
-// const path = require("path");
-// const contactsPath = path.join(__dirname, "contacts.json");
-// const { v4: uuidv4 } = require("uuid");
 
-const listContacts = async () => {
+const listContacts = async (userId, query) => {
   try {
-    return await Contact.find();
+    const {
+      limit = 5,
+      offset = 0,
+      sortBy,
+      sortByDesc,
+      filter,
+      favorite = null,
+    } = query;
+    const optSearch = { owner: userId };
+    if (favorite !== null) {
+      optSearch.favorite = favorite;
+    }
+    const res = await Contact.paginate(optSearch, {
+      limit,
+      offset,
+      select: filter ? filter.split("|").join(" ") : "",
+      sort: {
+        ...(sortBy ? { [`${sortBy}`]: 1 } : {}),
+        ...(sortByDesc ? { [`${sortByDesc}`]: 1 } : {}),
+      },
+    });
+    const { docs: contacts, totalDocs: total } = res;
+    return { contacts, total, limit, offset };
   } catch (err) {
     return err;
   }
 };
 
-const getContactById = async (contactId) => {
+const getContactById = async (contactId, userId) => {
   try {
-    return await Contact.findOne({ _id: contactId });
+    return await Contact.findOne({ _id: contactId, owner: userId });
   } catch (err) {
     return err;
   }
 };
 
-const removeContact = async (contactId) => {
+const removeContact = async (contactId, userId) => {
   try {
-    return await Contact.findByIdAndRemove({ _id: contactId });
+    return await Contact.findByIdAndRemove({ _id: contactId, owner: userId });
   } catch (err) {
     return err;
   }
@@ -36,11 +54,12 @@ const addContact = async (body) => {
   }
 };
 
-const updateContact = async (contactId, body) => {
+const updateContact = async (contactId, body, userId) => {
   try {
     return await Contact.findByIdAndUpdate(
       {
         _id: contactId,
+        owner: userId,
       },
       { ...body },
       { new: true }

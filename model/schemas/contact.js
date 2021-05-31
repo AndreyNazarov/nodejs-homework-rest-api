@@ -1,0 +1,41 @@
+const mongoose = require("mongoose");
+const mongoosePaginate = require("mongoose-paginate-v2");
+const { Schema, SchemaTypes } = mongoose;
+
+const contactSchema = new Schema(
+  {
+    name: {
+      type: String,
+    },
+    email: {
+      type: String,
+      trim: true,
+      lowercase: true,
+      unique: true,
+    },
+    phone: {
+      type: String,
+      required: [true, "User phone number required"],
+    },
+    favorite: {
+      type: Boolean,
+      default: false,
+    },
+    owner: {
+      type: SchemaTypes.ObjectId,
+      ref: "user",
+    },
+  },
+  {
+    versionKey: false,
+    timestamps: true,
+  }
+);
+
+contactSchema.path("name").validate((value) => {
+  const re = /[A-Z]\w+/;
+  return re.test(String(value));
+});
+contactSchema.plugin(mongoosePaginate);
+const Contact = mongoose.model("contact", contactSchema);
+module.exports = Contact;

@@ -2,3 +2,5 @@ node_modules
 .env
 URI_DB
 JWT_SECRET_KEY
+UPLOAD_DIR
+AVATARS_OF_USERS

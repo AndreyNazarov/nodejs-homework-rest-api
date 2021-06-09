@@ -17,6 +17,9 @@ passport.use(
       if (!user.token) {
         return done(null, false);
       }
+      if (!user.verify) {
+        return done(null, false);
+      }
       return done(null, user);
       // or you could create a new account
     } catch (e) {
